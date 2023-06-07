@@ -1,4 +1,5 @@
 using System.Net.Sockets;
+using Isu.Exceptions;
 using Isu.Models;
 
 namespace Isu.Entities;
@@ -6,6 +7,12 @@ namespace Isu.Entities;
 public class Group
 {
     public const int MaxNumOfStudentsInGroup = 30;
+    public const int FacultySymbol = 0;
+    private const int DegreeSymbol = 1;
+    private const int CourseSymbol = 2;
+    private const int MinLenght = 5;
+    private const int MaxLenght = 6;
+    private const char Bachelor = '3';
 
     private readonly List<Student> _students;
 
@@ -21,17 +28,19 @@ public class Group
     public CourseNumber CourseNumber { get; }
 
     public IReadOnlyCollection<Student> Students => _students;
-
     public static bool TryCreate(string groupName, out Group? group)
     {
         group = null;
-        if (groupName == null)
+        if (string.IsNullOrWhiteSpace(groupName))
         {
-            throw new ArgumentNullException();
+            throw new InvalidGroupNameException(groupName);
         }
 
-        if (!groupName.StartsWith("M") || groupName.Length is not(5 or 6) || groupName[1] != '3' ||
-            !int.TryParse(groupName[2].ToString(), out int course) || course is not(>= 1 and <= 4))
+        if (groupName[DegreeSymbol] != Bachelor
+            || !char.IsLetter(groupName[FacultySymbol])
+            || groupName.Length is not(MinLenght or MaxLenght)
+            || !int.TryParse(groupName[CourseSymbol].ToString(), out int course)
+            || course is not(>= (int)CourseNumber.First and <= (int)CourseNumber.Fourth))
         {
             return false;
         }

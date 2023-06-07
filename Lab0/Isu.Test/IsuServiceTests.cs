@@ -37,9 +37,9 @@ public class IsuServiceTests
     }
 
     [Theory]
-    [InlineData("a123")]
+    [InlineData("hdbiehbceibc3ibcb123")]
     [InlineData("M3209111")]
-    [InlineData("A32091")]
+    [InlineData("32091")]
     public void CreateGroupWithInvalidName_ThrowException(string invalidName)
     {
         Assert.Throws<InvalidGroupNameException>(() => _service.AddGroup(invalidName));
